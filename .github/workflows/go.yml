@@ -23,3 +23,6 @@ jobs:
 
     - name: Test
       run: go test -v ./...
+    
+    - name: Benchmark
+      run: go test -bench=. -run=XXX # run parameter disables non-benchmarking tests in this run
