@@ -1,5 +1,7 @@
 package main
 
+import "log/slog"
+
 type Interval struct {
 	Start int
 	End   int
@@ -37,5 +39,6 @@ func Merge(input []Interval) (output []Interval) {
 		//   input:     x──x
 		// --> ignore, as no modification is required
 	}
+	slog.Debug("Output after merge", slog.Any("intervals", output))
 	return
 }

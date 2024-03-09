@@ -2,10 +2,20 @@ package main
 
 import (
 	"fmt"
+	"log/slog"
+	"os"
 	"sort"
 	"strconv"
 	"strings"
 )
+
+func GetSanitizedInputArgs() string {
+	inputArgs := os.Args[1:] // skip first arg (program)
+	// sanitize input: remove all blanks and join probably multiple args together
+	sanitizedInput := strings.ReplaceAll(strings.Join(inputArgs, ""), " ", "")
+	slog.Debug("Input", slog.Any("args", sanitizedInput))
+	return sanitizedInput
+}
 
 func ParseInputArgs(input string) (output []Interval, err error) {
 	if len(input) < 2 {
@@ -31,5 +41,14 @@ func ParseInputArgs(input string) (output []Interval, err error) {
 		// Sort by Start, End
 		return output[i].Start < output[j].Start || (output[i].Start == output[j].Start && output[i].End < output[j].End)
 	})
+	slog.Debug("Parsed input", slog.Any("output intervals", output))
 	return
+}
+
+func FormatOutput(intervals []Interval) (output string) {
+	var stringifiedIntervals []string
+	for _, interval := range intervals {
+		stringifiedIntervals = append(stringifiedIntervals, fmt.Sprintf("[%d,%d]", interval.Start, interval.End))
+	}
+	return strings.Join(stringifiedIntervals, " ")
 }

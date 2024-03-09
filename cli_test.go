@@ -50,3 +50,7 @@ func BenchmarkParseInputArgs(b *testing.B) {
 		b.Errorf("error in function while running benchmark: %s, intervals: %v", err.Error(), intervals)
 	}
 }
+
+func TestFormatOutput(t *testing.T) {
+	assert.Equal(t, "[7,15] [26,200]", FormatOutput([]Interval{{Start: 7, End: 15}, {Start: 26, End: 200}}))
+}
