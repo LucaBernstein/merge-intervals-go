@@ -10,7 +10,7 @@ go run . <input intervals>
 
 ## Example
 
-The input `` should yield the output ``.
+The input `[25,30] [2,19] [14,23] [4,8]` should yield the output `[2,23] [25,30]`.
 
 ```bash
 # Input
@@ -25,5 +25,7 @@ go run . "[25,30] [2,19] [14,23] [4,8]"
 > TODO...
 
 ## Considerations and Assumptions
+
+* Order of intervals passed can be unordered, but interval definition itself is ordered (`[ <start> , <end> ]`)
 
 > TODO...

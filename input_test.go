@@ -32,6 +32,11 @@ func TestParseInputArgs(t *testing.T) {
 	output, err = ParseInputArgs("[3,4][1,2]")
 	assert.Nil(t, err)
 	assert.Equal(t, []Interval{{Start: 1, End: 2}, {Start: 3, End: 4}}, output)
+
+	// Multiple intervals, at least one with zero length
+	output, err = ParseInputArgs("[3,4][3,3]")
+	assert.Nil(t, err)
+	assert.Equal(t, []Interval{{Start: 3, End: 3}, {Start: 3, End: 4}}, output) // Sorted by Start, End
 }
 
 func BenchmarkParseInputArgs(b *testing.B) {

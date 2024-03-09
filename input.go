@@ -18,6 +18,7 @@ func ParseInputArgs(input string) (output []Interval, err error) {
 		if len(intervalRange) != 2 {
 			return nil, fmt.Errorf("unexpected interval format. Expected '[ <int> , <int> ]', found '%s' instead", interval)
 		}
+		// assumption: interval definition itself is ordered
 		start, errStart := strconv.Atoi(intervalRange[0])
 		end, errEnd := strconv.Atoi(intervalRange[1])
 		if errStart != nil || errEnd != nil {
@@ -27,7 +28,8 @@ func ParseInputArgs(input string) (output []Interval, err error) {
 	}
 	// sort provided intervals to simplify overlap detection later on
 	sort.Slice(output, func(i, j int) bool {
-		return output[i].Start < output[j].Start
+		// Sort by Start, End
+		return output[i].Start < output[j].Start || (output[i].Start == output[j].Start && output[i].End < output[j].End)
 	})
 	return
 }
