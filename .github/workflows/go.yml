@@ -21,8 +21,10 @@ jobs:
     - name: Build
       run: go build -v ./...
 
-    - name: Test
-      run: go test -v ./...
+    - name: Test & Coverage
+      run: |
+        go test -v ./... -coverprofile coverage.out -coverpkg=./...
+        go tool cover -func=coverage.out
     
     - name: Benchmark
-      run: go test -bench=. -run=XXX # run parameter disables non-benchmarking tests in this run
+      run: go test -bench=. -benchmem -run=XXX # run parameter disables non-benchmarking tests in this run
