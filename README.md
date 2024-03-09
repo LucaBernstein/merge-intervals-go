@@ -27,5 +27,4 @@ go run . "[25,30] [2,19] [14,23] [4,8]"
 ## Considerations and Assumptions
 
 * Order of intervals passed can be unordered, but interval definition itself is ordered (`[ <start> , <end> ]`)
-
-> TODO...
+* Interval start and end must be whole numbers (`ℤ`)

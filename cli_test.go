@@ -12,20 +12,22 @@ func TestParseInputArgs(t *testing.T) {
 
 	// No input
 	output, err = ParseInputArgs("")
-	assert.Nil(t, output)
 	assert.NotNil(t, err)
+	assert.Nil(t, output)
 
 	// Missing brackets
-	output, _ = ParseInputArgs("3, 4")
+	output, err = ParseInputArgs("3, 4")
 	assert.NotNil(t, err)
 	assert.Nil(t, output)
 
 	// Single interval input
-	output, _ = ParseInputArgs("[1,2]")
+	output, err = ParseInputArgs("[1,2]")
+	assert.Nil(t, err)
 	assert.Equal(t, []Interval{{Start: 1, End: 2}}, output)
 
 	// Multiple intervals, sorted
-	output, _ = ParseInputArgs("[1,2][3,4]")
+	output, err = ParseInputArgs("[1,2][3,4]")
+	assert.Nil(t, err)
 	assert.Equal(t, []Interval{{Start: 1, End: 2}, {Start: 3, End: 4}}, output)
 
 	// Multiple intervals, unsorted
@@ -37,6 +39,11 @@ func TestParseInputArgs(t *testing.T) {
 	output, err = ParseInputArgs("[3,4][3,3]")
 	assert.Nil(t, err)
 	assert.Equal(t, []Interval{{Start: 3, End: 3}, {Start: 3, End: 4}}, output) // Sorted by Start, End
+
+	// Multiple intervals with negative numbers, unsorted
+	output, err = ParseInputArgs("[-1,2][-11,-3]")
+	assert.Nil(t, err)
+	assert.Equal(t, []Interval{{Start: -11, End: -3}, {Start: -1, End: 2}}, output)
 }
 
 func BenchmarkParseInputArgs(b *testing.B) {

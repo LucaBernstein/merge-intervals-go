@@ -24,4 +24,13 @@ func TestMerge(t *testing.T) {
 
 	// Merge partially overlapping intervals
 	assert.Equal(t, []Interval{{Start: 1, End: 6}}, Merge([]Interval{{Start: 1, End: 5}, {Start: 2, End: 6}}))
+
+	// Merge touching intervals
+	assert.Equal(t, []Interval{{Start: 1, End: 6}}, Merge([]Interval{{Start: 1, End: 5}, {Start: 5, End: 6}}))
+
+	// Don't merge neighboring intervals
+	assert.Equal(t, []Interval{{Start: 1, End: 6}, {Start: 7, End: 10}}, Merge([]Interval{{Start: 1, End: 6}, {Start: 7, End: 10}}))
+
+	// Merge intervals with negative numbers
+	assert.Equal(t, []Interval{{Start: -11, End: -3}, {Start: -1, End: 1}}, Merge([]Interval{{Start: -11, End: -3}, {Start: -1, End: 0}, {Start: 0, End: 1}}))
 }
