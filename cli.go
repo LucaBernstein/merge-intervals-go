@@ -9,8 +9,21 @@ import (
 	"strings"
 )
 
+const envIntervalsFile = "INTERVALS_FILE"
+
 func GetSanitizedInputArgs() string {
 	inputArgs := os.Args[1:] // skip first arg (program)
+
+	// For larger inputs, the cli args don't work anymore. Hence, this option enables loading from file passed via env var
+	if len(inputArgs) == 0 && os.Getenv(envIntervalsFile) != "" {
+		data, err := os.ReadFile(os.Getenv(envIntervalsFile))
+		if err != nil {
+			slog.Error("Error while loading intervals from file", slog.String("err", err.Error()))
+			os.Exit(1)
+		}
+		inputArgs = []string{string(data)}
+	}
+
 	// sanitize input: remove all blanks and join probably multiple args together
 	sanitizedInput := strings.ReplaceAll(strings.Join(inputArgs, ""), " ", "")
 	slog.Debug("Input", slog.Any("args", sanitizedInput))
@@ -20,6 +33,10 @@ func GetSanitizedInputArgs() string {
 func ParseInputArgs(input string) (output []Interval, err error) {
 	if len(input) < 2 {
 		return nil, fmt.Errorf("at least one complete number interval must be provided (found: '%s' instead)", input)
+	}
+	// Ensure outer brackets in input
+	if input[0] != '[' || input[len(input)-1] != ']' {
+		return nil, fmt.Errorf("unexpected interval format. Expected '[ <int> , <int> ]', found '%s' instead", input)
 	}
 	innerValue := input[1 : len(input)-1] // remove outer brackets
 	intervals := strings.Split(innerValue, "][")

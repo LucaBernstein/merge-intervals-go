@@ -49,27 +49,44 @@ func BenchmarkMerge(b *testing.B) {
 	}
 }
 
-func fillIntersectingInterval(size int) (sample []Interval) {
+func fillIntersectingInterval(size int, overlap bool) (sample []Interval) {
 	for i := range size {
-		sample = append(sample, Interval{Start: i, End: i + 2})
+		if overlap {
+			sample = append(sample, Interval{Start: i, End: i + 2})
+			continue
+		}
+		sample = append(sample, Interval{Start: -i, End: -i})
 	}
 	return
 }
 
-func benchmarkMergeSkeleton(intervalCount int, b *testing.B) {
-	sampleInput := fillIntersectingInterval(intervalCount)
+func benchmarkMergeSkeleton(intervalCount int, overlap bool, b *testing.B) {
+	sampleInput := fillIntersectingInterval(intervalCount, overlap)
 	var intervals []Interval
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
 		intervals = Merge(sampleInput)
 	}
 	b.StopTimer()
-	expectedInterval := Interval{Start: 0, End: intervalCount + 1}
-	if len(intervals) != 1 || intervals[0] != expectedInterval {
-		b.Errorf("unexpected output: %v", intervals)
+	if overlap {
+		expectedInterval := Interval{Start: 0, End: intervalCount + 1}
+		if len(intervals) != 1 || intervals[0] != expectedInterval {
+			b.Errorf("unexpected output: %v", intervals)
+		}
+	} else {
+		if len(intervals) != intervalCount {
+			b.Errorf("unexpected output interval count: %d", len(intervals))
+		}
 	}
 }
 
-func BenchmarkMerge1000(b *testing.B)   { benchmarkMergeSkeleton(1000, b) }
-func BenchmarkMerge10000(b *testing.B)  { benchmarkMergeSkeleton(10000, b) }
-func BenchmarkMerge100000(b *testing.B) { benchmarkMergeSkeleton(100000, b) }
+func BenchmarkMergeOverlap1000(b *testing.B)    { benchmarkMergeSkeleton(1000, true, b) }
+func BenchmarkMergeOverlap10000(b *testing.B)   { benchmarkMergeSkeleton(10000, true, b) }
+func BenchmarkMergeOverlap100000(b *testing.B)  { benchmarkMergeSkeleton(100000, true, b) }
+func BenchmarkMergeOverlap1000000(b *testing.B) { benchmarkMergeSkeleton(1000000, true, b) }
+
+func BenchmarkMergeDistinct1000(b *testing.B)     { benchmarkMergeSkeleton(1000, true, b) }
+func BenchmarkMergeDistinct10000(b *testing.B)    { benchmarkMergeSkeleton(10000, true, b) }
+func BenchmarkMergeDistinct100000(b *testing.B)   { benchmarkMergeSkeleton(100000, true, b) }
+func BenchmarkMergeDistinct1000000(b *testing.B)  { benchmarkMergeSkeleton(1000000, true, b) }
+func BenchmarkMergeDistinct10000000(b *testing.B) { benchmarkMergeSkeleton(10000000, true, b) }
