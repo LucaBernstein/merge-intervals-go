@@ -27,4 +27,4 @@ jobs:
         go tool cover -func=coverage.out
     
     - name: Benchmark
-      run: go test -bench=. -benchmem -run=XXX # run parameter disables non-benchmarking tests in this run
+      run: go test -bench=. -benchmem -run=XXX ./... # run parameter disables non-benchmarking tests in this run
