@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log/slog"
 	"os"
 	"testing"
 
@@ -14,6 +15,7 @@ func TestLoadFromFile(t *testing.T) {
 }
 
 func TestLoadFromFileNotExist(t *testing.T) {
+	slog.SetLogLoggerLevel(slog.LevelError + 1) // Don't log expected error
 	assert.Equal(t, "", LoadFromFile("test-interval-file-does-not-exist.txt"))
 }
 
