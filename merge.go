@@ -7,7 +7,7 @@ type Interval struct {
 	End   int
 }
 
-// Merge takes a list of intervals, merges overlapping intervals and returns the merged list of intervals.
+// Merge takes a list of intervals, merges overlapping intervals, keeps non-overlapping intervals untouched and returns the merged list of all intervals.
 // The input interval list must be ordered ascending by each Interval's Start and End values
 func Merge(input []Interval) (output []Interval) {
 	if len(input) <= 1 { // For 0 or 1 elements, the input intervals are already merged.
