@@ -9,28 +9,43 @@ import (
 	"strings"
 )
 
-const envIntervalsFile = "INTERVALS_FILE"
+const EnvIntervalsFile = "INTERVALS_FILE"
 
-func GetSanitizedInputArgs() string {
+func LoadFromArgs() string {
 	inputArgs := os.Args[1:] // skip first arg (program)
+	return sanitizeInput(strings.Join(inputArgs, ""))
+}
 
-	// For larger inputs, the cli args don't work anymore. Hence, this option enables loading from file passed via env var
-	if len(inputArgs) == 0 && os.Getenv(envIntervalsFile) != "" {
-		data, err := os.ReadFile(os.Getenv(envIntervalsFile))
-		if err != nil {
-			slog.Error("Error while loading intervals from file", slog.String("err", err.Error()))
-			os.Exit(1)
-		}
-		inputArgs = []string{string(data)}
+func LoadFromFile(filename string) string {
+	data, err := os.ReadFile(filename)
+	if err != nil {
+		slog.Error("Error while loading intervals from file. Returning empty string.", slog.String("err", err.Error()))
+		return ""
 	}
+	return sanitizeInput(string(data))
+}
 
+func sanitizeInput(input string) string {
 	// sanitize input: remove all blanks and join probably multiple args together
-	sanitizedInput := strings.ReplaceAll(strings.Join(inputArgs, ""), " ", "")
+	sanitizedInput := strings.ReplaceAll(input, " ", "")
 	slog.Debug("Input", slog.Any("args", sanitizedInput))
 	return sanitizedInput
 }
 
-func ParseInputArgs(input string) (output []Interval, err error) {
+func LoadInputIntervals() string {
+	// First option: Load intervals to merge from cli args
+	input := LoadFromArgs()
+
+	// Second option: For larger inputs, the cli args don't work anymore.
+	// Hence, this option enables loading from file passed via env var
+	if len(input) == 0 && os.Getenv(EnvIntervalsFile) != "" {
+		return LoadFromFile(os.Getenv(EnvIntervalsFile))
+	}
+
+	return input
+}
+
+func ParseInput(input string) (output []Interval, err error) {
 	if len(input) < 2 {
 		return nil, fmt.Errorf("at least one complete number interval must be provided (found: '%s' instead)", input)
 	}

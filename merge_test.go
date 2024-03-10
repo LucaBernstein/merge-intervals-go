@@ -36,7 +36,7 @@ func TestMerge(t *testing.T) {
 }
 
 func BenchmarkMerge(b *testing.B) {
-	sampleInput, _ := ParseInputArgs("[0,1][1,2][2,3][3,100][4,101][5,102][600,700][800,999][1000,1000][1001,1002][1002,1004][1003,10000]")
+	sampleInput, _ := ParseInput("[0,1][1,2][2,3][3,100][4,101][5,102][600,700][800,999][1000,1000][1001,1002][1002,1004][1003,10000]")
 	var intervals []Interval
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
