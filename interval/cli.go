@@ -25,13 +25,17 @@ func LoadFromFile(filename string) string {
 	return sanitizeInput(string(data))
 }
 
+// sanitizeInput removes all blanks and joins probably multiple args together
 func sanitizeInput(input string) string {
-	// sanitize input: remove all blanks and join probably multiple args together
 	sanitizedInput := strings.ReplaceAll(input, " ", "")
 	slog.Debug("Input", slog.Any("args", sanitizedInput))
 	return sanitizedInput
 }
 
+// LoadInputIntervals tries to load intervals to merge from cli args
+//
+// If no args are passed, it loads intervals from file
+// Filename to load from is passed via env var
 func LoadInputIntervals() string {
 	// First option: Load intervals to merge from cli args
 	input := LoadFromArgs()
@@ -45,6 +49,7 @@ func LoadInputIntervals() string {
 	return input
 }
 
+// ParseInput takes intervals as an argument, parses them into the internal Interval structure and sorts them by Start, End params
 func ParseInput(input string) (output []Interval, err error) {
 	if len(input) < 2 {
 		return nil, fmt.Errorf("at least one complete number interval must be provided (found: '%s' instead)", input)
